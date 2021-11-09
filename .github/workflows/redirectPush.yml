@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Push to another ref
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: pandoc/latex
+    steps:
+      - uses: actions/checkout@v2
+      - name: Pushes to another repository
+        id: push_directory
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: '.'
+          destination-github-username: 'EpitechPromo2024'
+          destination-repository-name: 'B-DEV-500-NCY-5-1-dashboard-aurelien.schulz'
+          user-email: gabriel.huguenin-dumittan@epitech.eu
+          commit-message: See ORIGIN_COMMIT from $GITHUB_REF
+          target-branch: main
