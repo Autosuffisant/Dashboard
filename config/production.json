@@ -1,0 +1,7 @@
+{
+	"DBHost": "mongodb://mongo:27017/dashboardnode",
+	"HostEmail": "",
+	"EmailPassword": "",
+	"secret": "jesusjosuearchibaldjohnathanjohnremington@daltontexas",
+	"FrontUrl": "http://localhost:3030"
+}
