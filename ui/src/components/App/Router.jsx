@@ -3,6 +3,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect';
 
+import About from '../About/index';
 import Layout from '../Layout/index';
 import Login from '../Login/index';
 import Dashboard from '../Dashboard/index';
@@ -25,6 +26,7 @@ const WrappedRoutes = () => (
   <div>
     <Layout>
       <Switch>
+        <Route exact path="/about.json" component={About} />
         <Route path="/dashboard/" component={Dashboard} />
       </Switch>
     </Layout>
