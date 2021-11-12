@@ -6,15 +6,18 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
+import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { connect } from 'react-redux';
 import uiActions from '../../redux/actions/uiActions';
+import Links from './components/Menu';
 import userActions from '../../redux/actions/userActions';
 import ProfileMenu from './components/ProfileMenu';
 
@@ -72,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Layout = ({
-  currentPage, children,
+  currentPage, location, children,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -98,6 +101,8 @@ const Layout = ({
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const [open, setOpen] = useState(false);
 
   const mobileProfilMenuId = 'account-menu-mobile';
 
@@ -132,7 +137,16 @@ const Layout = ({
         className={classes.appBar}
       >
         <Toolbar>
-          <img src="/favicon.ico" className={classes.logo} alt="Dashboard logo" />
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            className={classes.menuButton}
+            onClick={() => setOpen(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <img src="/favicon.ico" className={classes.logo} alt="Dashboard logo" to="/dashboard" />
           <Typography variant="h6">
             {currentPage}
           </Typography>
@@ -164,6 +178,20 @@ const Layout = ({
       </AppBar>
       {renderMobileMenu}
       <ProfileMenu handleMenuClose={handleProfileMenuClose} anchorEl={anchorEl} />
+      <Drawer
+        className={classes.drawer}
+        classes={{
+          paper: classes.drawerOpen,
+        }}
+        variant="temporary"
+        anchor="left"
+        open={open}
+      >
+        <Links
+          selectedRoute={location.pathname}
+          handleDrawerClose={() => setOpen(false)}
+        />
+      </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {children}
@@ -175,6 +203,7 @@ const Layout = ({
 Layout.propTypes = {
   currentPage: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
+  location: PropTypes.object.isRequired,
 };
 
 function mapState(state) {
