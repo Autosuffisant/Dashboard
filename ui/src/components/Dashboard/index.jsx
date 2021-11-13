@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
 import uiActions from '../../redux/actions/uiActions';
 import WelcomeTitle from './components/WelcomeTitle';
+import GridLayout from './components/GridLayout';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -17,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   container: {
-    paddingTop: theme.spacing(4),
+    padding: theme.spacing(4),
+  },
+  greeting: {
     paddingBottom: theme.spacing(4),
   },
 }));
@@ -32,13 +34,16 @@ const Dashboard = ({
   }, []);
 
   return (
-    <Container maxWidth="lg" className={classes.container}>
-      <Grid container style={{ justifyContent: 'space-between' }} spacing={3}>
-        <Grid item xs={12} md={12}>
+    <Grid container className={classes.container}>
+      <Grid item xs={12} md={12}>
+        <Grid xs={12} className={classes.greeting}>
           <WelcomeTitle username={username} />
         </Grid>
+        <Grid xs={12}>
+          <GridLayout className={classes.content} />
+        </Grid>
       </Grid>
-    </Container>
+    </Grid>
   );
 };
 
