@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -39,6 +39,30 @@ const Dashboard = ({
 }) => {
   const classes = useStyles();
 
+  const [edit, setEdit] = useState(false);
+  const [widgetList, setWidgetList] = useState([{ id: 0 }]);
+  const [widgetNumber, setWidgetNumber] = useState(1);
+
+  const addNewWidget = () => {
+    const newWidget = { id: widgetNumber };
+
+    setWidgetNumber(widgetNumber + 1);
+    setWidgetList([...widgetList, newWidget]);
+  };
+
+  const removeLastWidget = () => {
+    if (widgetNumber > 0) {
+      const temp = [...widgetList];
+
+      temp.splice(temp.length - 1, 1);
+      setWidgetList(temp);
+      setWidgetNumber(widgetNumber - 1);
+    }
+  };
+
+  const switchEdit = () => {
+    setEdit(!edit);
+  };
   useEffect(() => {
     changePageTitle('Dashboard');
   }, []);
@@ -51,12 +75,17 @@ const Dashboard = ({
             <WelcomeTitle username={username} />
           </Grid>
           <Grid xs={12}>
-            <GridLayout className={classes.content} />
+            <GridLayout widgets={widgetList} edit={edit} className={classes.content} />
           </Grid>
         </Grid>
       </Grid>
       <div className={classes.fab}>
-        <AddWidget />
+        <AddWidget
+          RemoveLastWidget={removeLastWidget}
+          AddNewWidget={addNewWidget}
+          setEdit={switchEdit}
+          edit={edit}
+        />
       </div>
     </>
   );
