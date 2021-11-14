@@ -13,6 +13,7 @@ import {
 import PropTypes from 'prop-types';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
+import CheckIcon from '@material-ui/icons/Check';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,9 +53,14 @@ const AddWidget = ({
         <AddIcon className={classes.icon} />
         Add a Widget
       </Fab>
-      <Fab className={classes.fab} variant="extended" color="secondary" onClick={setEdit}>
-        <EditIcon className={classes.icon} />
-        {edit ? 'Save layout' : 'Edit layout'}
+      <Fab className={classes.fab} variant="extended" color={edit ? 'default' : 'secondary'} onClick={setEdit}>
+        {
+          edit ? <CheckIcon className={classes.icon} />
+            : <EditIcon className={classes.icon} />
+        }
+        {
+          edit ? 'Save layout' : 'Edit layout'
+        }
       </Fab>
       <Dialog
         fullScreen={fullScreen}
@@ -70,7 +76,7 @@ const AddWidget = ({
           <Container>
             <Grid container direction="row" spacing={4}>
               <Grid item>
-                <Button variant="contained" onClick={AddNewWidget} color="secondary">
+                <Button variant="contained" onClick={AddNewWidget} color="primary">
                   Add widget
                 </Button>
               </Grid>
