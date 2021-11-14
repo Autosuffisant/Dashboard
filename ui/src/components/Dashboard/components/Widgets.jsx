@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.background.paper,
     height: '30vh',
     width: '30vh',
     margin: theme.spacing(2),
@@ -31,7 +31,7 @@ const Widgets = () => {
 
   return (
     <Grid item>
-      <Paper className={classes.container} />
+      <Paper elevation={10} className={classes.container} />
     </Grid>
   );
 };
