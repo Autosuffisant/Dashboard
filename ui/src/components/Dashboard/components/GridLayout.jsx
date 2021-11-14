@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { ListManager } from 'react-beautiful-dnd-grid';
 import Widgets from './Widgets';
 
 const useStyles = makeStyles((theme) => ({
@@ -17,13 +17,19 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
+  Paper: {
+    height: 100,
+    backgroundColor: '#fff',
+  },
 }));
 
 const GridLayout = () => {
   const classes = useStyles();
-  const Image = '';
-  const Title = 'Title';
+  const Title = '';
   const HoverTitle = 'Hover !';
+  const Image = '';
+
+  const list = [{ id: '0' }, { id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }];
 
   useEffect(() => {
   }, []);
@@ -31,10 +37,16 @@ const GridLayout = () => {
   return (
     <Grid
       container
-      spacing={5}
       className={classes.container}
+      spacing={5}
     >
-      <Widgets Title={Title} Image={Image} HoverTitle={HoverTitle} />
+      <ListManager
+        items={list}
+        direction="horizontal"
+        maxItems={5}
+        render={() => <Widgets Title={Title} HoverTitle={HoverTitle} Image={Image} />}
+        onDragEnd={() => {}}
+      />
     </Grid>
   );
 };
