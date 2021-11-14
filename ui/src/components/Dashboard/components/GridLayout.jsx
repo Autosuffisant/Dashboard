@@ -1,4 +1,7 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/forbid-prop-types */
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { ListManager } from 'react-beautiful-dnd-grid';
@@ -23,15 +26,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridLayout = () => {
+const GridLayout = ({
+  edit, widgets,
+}) => {
   const classes = useStyles();
   const Title = '';
   const HoverTitle = 'Hover !';
   const Image = '';
-
-  const list = [
-    { id: '0' }, { id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }, { id: '7' }, { id: '8' }, { id: '9' },
-  ];
 
   useEffect(() => {
   }, []);
@@ -42,18 +43,32 @@ const GridLayout = () => {
       className={classes.container}
       spacing={5}
     >
-      <ListManager
-        items={list}
-        direction="horizontal"
-        maxItems={5}
-        render={() => <Widgets Title={Title} HoverTitle={HoverTitle} Image={Image} />}
-        onDragEnd={() => {}}
-      />
+      {
+        edit ? (
+          <ListManager
+            items={widgets}
+            direction="horizontal"
+            maxItems={5}
+            render={() => <Widgets Title={Title} HoverTitle={HoverTitle} Image={Image} />}
+            onDragEnd={() => {}}
+          />
+        ) : widgets.map ? (
+          <Grid container>
+            {
+              widgets.map(
+                () => <Widgets Title={Title} HoverTitle={HoverTitle} Image={Image} />,
+              )
+            }
+          </Grid>
+        ) : null
+      }
     </Grid>
   );
 };
 
 GridLayout.propTypes = {
+  edit: PropTypes.bool.isRequired,
+  widgets: PropTypes.array.isRequired,
 };
 
 export default GridLayout;
