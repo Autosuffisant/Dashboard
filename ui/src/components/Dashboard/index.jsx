@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import uiActions from '../../redux/actions/uiActions';
 import WelcomeTitle from './components/WelcomeTitle';
 import GridLayout from './components/GridLayout';
+import AddWidget from './components/AddWIdget';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -22,6 +23,15 @@ const useStyles = makeStyles((theme) => ({
   greeting: {
     paddingBottom: theme.spacing(4),
   },
+  fab: {
+    margin: 0,
+    top: 'auto',
+    bottom: 30,
+    left: 10,
+    right: 'auto',
+    position: 'fixed',
+    zIndex: '10',
+  },
 }));
 
 const Dashboard = ({
@@ -34,16 +44,21 @@ const Dashboard = ({
   }, []);
 
   return (
-    <Grid container className={classes.container}>
-      <Grid item xs={12} md={12}>
-        <Grid xs={12} className={classes.greeting}>
-          <WelcomeTitle username={username} />
-        </Grid>
-        <Grid xs={12}>
-          <GridLayout className={classes.content} />
+    <>
+      <Grid container className={classes.container}>
+        <Grid item xs={12} md={12}>
+          <Grid xs={12} className={classes.greeting}>
+            <WelcomeTitle username={username} />
+          </Grid>
+          <Grid xs={12}>
+            <GridLayout className={classes.content} />
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+      <div className={classes.fab}>
+        <AddWidget />
+      </div>
+    </>
   );
 };
 
