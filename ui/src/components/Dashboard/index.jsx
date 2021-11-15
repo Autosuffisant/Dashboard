@@ -56,8 +56,14 @@ const Dashboard = ({
 
       temp.splice(temp.length - 1, 1);
       setWidgetList(temp);
-      setWidgetNumber(widgetNumber - 1);
     }
+  };
+
+  const removeWidget = (id) => {
+    const temp = [...widgetList];
+
+    temp.splice(id, 1);
+    setWidgetList(temp);
   };
 
   const switchEdit = () => {
@@ -75,7 +81,12 @@ const Dashboard = ({
             <WelcomeTitle username={username} />
           </Grid>
           <Grid xs={12}>
-            <GridLayout widgets={widgetList} edit={edit} className={classes.content} />
+            <GridLayout
+              removeWidget={removeWidget}
+              widgets={widgetList}
+              edit={edit}
+              className={classes.content}
+            />
           </Grid>
         </Grid>
       </Grid>
