@@ -27,12 +27,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const GridLayout = ({
-  edit, widgets,
+  removeWidget, edit, widgets,
 }) => {
   const classes = useStyles();
-  const Title = '';
+  const Title = 'Title';
   const HoverTitle = 'Hover !';
-  const Image = '';
 
   useEffect(() => {
   }, []);
@@ -49,15 +48,29 @@ const GridLayout = ({
             items={widgets}
             direction="horizontal"
             maxItems={5}
-            render={() => <Widgets Title={Title} HoverTitle={HoverTitle} Image={Image} />}
-            onDragEnd={() => {}}
+            render={(id) => (
+              <Widgets
+                id={id}
+                removeSelf={removeWidget}
+                edit={edit}
+                Title={Title}
+                HoverTitle={HoverTitle}
+              />
+            )}
+            onDragEnd={() => { }}
           />
         ) : widgets.map ? (
           <Grid container>
             {
-              widgets.map(
-                () => <Widgets Title={Title} HoverTitle={HoverTitle} Image={Image} />,
-              )
+              widgets.map((id) => (
+                <Widgets
+                  id={id}
+                  removeSelf={removeWidget}
+                  edit={edit}
+                  Title={Title}
+                  HoverTitle={HoverTitle}
+                />
+              ))
             }
           </Grid>
         ) : null
@@ -67,6 +80,7 @@ const GridLayout = ({
 };
 
 GridLayout.propTypes = {
+  removeWidget: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
   widgets: PropTypes.array.isRequired,
 };
