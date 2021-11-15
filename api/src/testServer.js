@@ -60,7 +60,7 @@ routeAdministrator(app);
 routeUser(app);
 routeCountry(app);
 routeLanguage(app);
-const port = process.env.PORT || 8080;
+const port = 8080;
 
 app.listen(port, () => {
   debugServer('listening');
