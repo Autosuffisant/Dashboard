@@ -23,7 +23,7 @@ const helmet = require('helmet');
 const config = require('config');
 const compression = require('compression');
 
-const port = process.env.PORT || 8080;
+const port = 8080;
 
 connectToDashboardDB((err, client) => {
   if (err) console.log(err);
