@@ -53,7 +53,14 @@ const AddWidget = ({
         <AddIcon className={classes.icon} />
         Add a Widget
       </Fab>
-      <Fab className={classes.fab} variant="extended" color={edit ? 'default' : 'secondary'} onClick={setEdit}>
+      <Fab
+        className={classes.fab}
+        variant="extended"
+        style={{
+          backgroundColor: edit ? '#55a630' : '#dddd00',
+        }}
+        onClick={setEdit}
+      >
         {
           edit ? <CheckIcon className={classes.icon} />
             : <EditIcon className={classes.icon} />
