@@ -6,7 +6,6 @@ const darkMode = JSON.parse(localStorage.getItem('darkMode')) ? JSON.parse(local
 const initialState = {
   currentPage,
   darkMode,
-  currentGroup: 0,
 };
 
 export default function ui(state = initialState, action) {
@@ -20,11 +19,6 @@ export default function ui(state = initialState, action) {
       return {
         ...state,
         darkMode: action.darkMode,
-      };
-    case uiConstants.SET_CURRENT_GROUP:
-      return {
-        ...state,
-        currentGroup: action.group,
       };
     default:
       return state;
