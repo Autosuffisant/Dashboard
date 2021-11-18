@@ -1,10 +1,17 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/jsx-no-bind */
+/* eslint-disable func-names */
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { ListManager } from 'react-beautiful-dnd-grid';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DndContext } from '@dnd-kit/core';
 import Widgets from './Widgets';
 
 const useStyles = makeStyles((theme) => ({
@@ -17,8 +24,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: theme.palette.background.paper,
     borderRadius: 15,
+    minHeight: '40vh',
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    marginBottom: theme.spacing(4),
   },
   Paper: {
     height: 100,
@@ -27,44 +36,92 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const GridLayout = ({
-  removeWidget, edit, widgets,
+  setWidgetList, removeWidget, edit, widgets,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const Title = 'Title';
   const HoverTitle = 'Hover !';
+  const widgetList = widgets;
 
-  useEffect(() => {
-  }, []);
+  const getListStyle = (isDraggingOver, itemsLength) => ({
+    display: 'flex',
+    'flex-wrap': 'wrap',
+    overflow: 'always',
+  });
+
+  const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+  };
+
+  function onDragEnd(result) {
+    if (!result.destination) {
+      return;
+    }
+
+    const reordered = reorder(
+      widgetList,
+      result.source.index,
+      result.destination.index,
+    );
+
+    setWidgetList(
+      reordered,
+    );
+  }
 
   return (
     <Grid
       container
       className={classes.container}
-      spacing={5}
+      spacing={4}
     >
       {
-        edit ? (
-          <ListManager
-            items={widgets}
-            direction="horizontal"
-            maxItems={5}
-            render={(id) => (
-              <Widgets
-                id={id}
-                removeSelf={removeWidget}
-                edit={edit}
-                Title={Title}
-                HoverTitle={HoverTitle}
-              />
-            )}
-            onDragEnd={() => { }}
-          />
-        ) : widgets.map ? (
+        edit ? widgetList.map ? (
+          <Grid container>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable" direction="horizontal">
+                {(provided, snapshot) => (
+                  <div
+                    {...provided.droppableProps}
+                    style={getListStyle(snapshot.isDraggingOver, widgetList.length)}
+                    ref={provided.innerRef}
+                  >
+                    {widgetList.map((item, index) => (
+                      <Draggable key={item.id} draggableId={item.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <Widgets
+                              item={item}
+                              removeSelf={removeWidget}
+                              edit={edit}
+                              Title={Title}
+                              HoverTitle={HoverTitle}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Grid>
+        ) : null : widgetList.map ? (
           <Grid container>
             {
-              widgets.map((id) => (
+              widgetList.map((item) => (
                 <Widgets
-                  id={id}
+                  item={item}
                   removeSelf={removeWidget}
                   edit={edit}
                   Title={Title}
@@ -80,6 +137,7 @@ const GridLayout = ({
 };
 
 GridLayout.propTypes = {
+  setWidgetList: PropTypes.func.isRequired,
   removeWidget: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
   widgets: PropTypes.array.isRequired,
