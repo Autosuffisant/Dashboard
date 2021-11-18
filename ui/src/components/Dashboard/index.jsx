@@ -40,29 +40,30 @@ const Dashboard = ({
   const classes = useStyles();
 
   const [edit, setEdit] = useState(false);
-  const [widgetList, setWidgetList] = useState([{ id: 0 }]);
-  const [widgetNumber, setWidgetNumber] = useState(1);
+  const [widgetList, setWidgetList] = useState([{ id: 'item-0' }]);
+  const [widgetID, setWidgetID] = useState(1);
 
   const addNewWidget = () => {
-    const newWidget = { id: widgetNumber };
+    const newWidgetList = [...widgetList];
 
-    setWidgetNumber(widgetNumber + 1);
-    setWidgetList([...widgetList, newWidget]);
+    newWidgetList.push({ id: `item-${widgetID}` });
+
+    setWidgetID(widgetID + 1);
+    setWidgetList(newWidgetList);
   };
 
   const removeLastWidget = () => {
-    if (widgetNumber > 0) {
-      const temp = [...widgetList];
+    const temp = [...widgetList];
 
-      temp.splice(temp.length - 1, 1);
-      setWidgetList(temp);
-    }
+    temp.pop();
+    setWidgetList(temp);
   };
 
   const removeWidget = (id) => {
     const temp = [...widgetList];
 
-    temp.splice(id, 1);
+    const index = temp.findIndex((element) => id === element.id);
+    temp.splice(index, 1);
     setWidgetList(temp);
   };
 
@@ -71,6 +72,7 @@ const Dashboard = ({
   };
   useEffect(() => {
     changePageTitle('Dashboard');
+    addNewWidget();
   }, []);
 
   return (
@@ -82,6 +84,7 @@ const Dashboard = ({
           </Grid>
           <Grid xs={12}>
             <GridLayout
+              setWidgetList={setWidgetList}
               removeWidget={removeWidget}
               widgets={widgetList}
               edit={edit}
