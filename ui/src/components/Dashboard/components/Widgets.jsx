@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-restricted-globals */
 import React, { useState, useEffect } from 'react';
@@ -45,6 +46,10 @@ const useStyles = makeStyles((theme) => ({
     left: 'auto',
     right: -20,
   },
+  gridBody: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+  },
   cardBody: {
     height: '4em',
     display: 'flex',
@@ -52,11 +57,19 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     textAlign: 'center',
+    alignSelf: 'center',
+  },
+  widget: {
+    padding: theme.spacing(2),
+  },
+  widgetBody: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
 const Widgets = ({
-  id, removeSelf, edit, Title, HoverTitle,
+  item, removeSelf, edit, Title, HoverTitle,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -72,11 +85,10 @@ const Widgets = ({
   };
 
   useEffect(() => {
-    console.log(id);
   }, []);
 
   return (
-    <Grid item>
+    <Grid key={item.id} item className={classes.gridBody}>
       <Dialog
         fullScreen={fullScreen}
         open={open}
@@ -89,7 +101,7 @@ const Widgets = ({
       >
         <DialogContent>
           <Container>
-            <Grid item md={12} className={classes.cardBody}>
+            <Grid item xs={12} className={classes.cardBody}>
               <Typography
                 variant="h6"
                 className={classes.title}
@@ -100,7 +112,7 @@ const Widgets = ({
           </Container>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" autoFocus onClick={() => removeSelf(id)} color="secondary">
+          <Button variant="contained" autoFocus onClick={() => removeSelf(item.id)} color="secondary">
             Delete
           </Button>
         </DialogActions>
@@ -111,7 +123,13 @@ const Widgets = ({
             edit ? <Fab onClick={() => handleClickOpen()} className={classes.clearButton} color="secondary" size="small"><ClearIcon /></Fab>
               : null
           }
-          <Typography>{`Widget ${id ? id.id : ':('}`}</Typography>
+          <Container className={classes.widget}>
+            <Grid container direction="row" className={classes.widgetBody}>
+              <Grid item xs={12}>
+                <Typography className={classes.title}>{`Widget ${item.id || ':('}`}</Typography>
+              </Grid>
+            </Grid>
+          </Container>
         </Paper>
       </Tooltip>
     </Grid>
@@ -124,7 +142,7 @@ Widgets.defaultProps = {
 };
 
 Widgets.propTypes = {
-  id: PropTypes.number.isRequired,
+  item: PropTypes.object.isRequired,
   removeSelf: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
   Title: PropTypes.string,
