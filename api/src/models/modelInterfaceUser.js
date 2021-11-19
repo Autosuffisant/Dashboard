@@ -14,9 +14,10 @@ const schemaInterfaceUser = new Schema({
   themeColor: {
     type: Object,
     default: {
-      r: 110, g: 140, b: 160, a: 0.3
+      r: 0, g: 17, b: 170, a: 1.0
     }
   },
+  // Variable used for future mail verification
   isVerified: { type: Boolean, default: false },
   admin: { Boolean, default: false },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
