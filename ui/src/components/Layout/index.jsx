@@ -15,7 +15,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import PaletteIcon from '@material-ui/icons/Palette';
 import { connect } from 'react-redux';
+import { TwitterPicker } from 'react-color';
 import uiActions from '../../redux/actions/uiActions';
 import Links from './components/Menu';
 import userActions from '../../redux/actions/userActions';
@@ -75,19 +77,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Layout = ({
-  currentPage, location, children,
+  changeColor, ThemeColor, currentPage, location, children,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [colorMenu, setColorMenu] = useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [currentThemeColor, setcurrentThemeColor] = useState(ThemeColor);
 
   useEffect(() => {
   }, []);
+
+  const handleColor = (color) => {
+    setcurrentThemeColor(color.hex);
+    changeColor(color.hex);
+  };
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClickcolor = (event) => {
+    setColorMenu(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setColorMenu(null);
   };
 
   const handleProfileMenuClose = () => {
@@ -133,6 +150,7 @@ const Layout = ({
   return (
     <div className={classes.root}>
       <AppBar
+        style={{ backgroundColor: currentThemeColor }}
         position="fixed"
         className={classes.appBar}
       >
@@ -151,6 +169,14 @@ const Layout = ({
             {currentPage}
           </Typography>
           <div className={classes.grow} />
+          <IconButton
+            aria-label="more"
+            aria-controls="menu-color"
+            aria-haspopup="true"
+            onClick={handleClickcolor}
+          >
+            <PaletteIcon style={{ fill: '#fff' }} />
+          </IconButton>
           <div className={classes.sectionDesktop}>
             <IconButton
               edge="end"
@@ -177,6 +203,18 @@ const Layout = ({
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
+      <Menu
+        id="menu-color"
+        anchorEl={colorMenu}
+        keepMounted
+        open={Boolean(colorMenu)}
+        onClose={handleClose}
+      >
+        <TwitterPicker
+          color={currentThemeColor}
+          onChangeComplete={handleColor}
+        />
+      </Menu>
       <ProfileMenu handleMenuClose={handleProfileMenuClose} anchorEl={anchorEl} />
       <Drawer
         className={classes.drawer}
@@ -204,18 +242,21 @@ Layout.propTypes = {
   currentPage: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   location: PropTypes.object.isRequired,
+  ThemeColor: PropTypes.string.isRequired,
+  changeColor: PropTypes.func.isRequired,
 };
 
 function mapState(state) {
-  const { currentPage, currentGroup } = state.ui;
+  const { currentThemeColor } = state.ui;
   return {
-    currentPage, currentGroup,
+    currentThemeColor,
   };
 }
 
 const actionCreator = {
   logout: userActions.logout,
   changeDarkMode: uiActions.changeDarkMode,
+  changeColor: uiActions.changeColor,
 };
 
 export default withRouter(connect(mapState, actionCreator)(Layout));
