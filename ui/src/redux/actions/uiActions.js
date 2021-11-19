@@ -14,9 +14,17 @@ const changeDarkMode = () => (dispatch, getState) => {
   });
 };
 
+const changeColor = () => (dispatch, color) => {
+  dispatch({
+    type: uiConstants.CHANGE_PAGE_COLOR,
+    themeColor: color,
+  });
+};
+
 const uiActions = {
   changePageTitle,
   changeDarkMode,
+  changeColor,
 };
 
 export default uiActions;
