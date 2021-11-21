@@ -14,11 +14,12 @@ const changeDarkMode = () => (dispatch, getState) => {
   });
 };
 
-const changeColor = () => (dispatch, color) => {
+const changeColor = (color) => (dispatch) => {
   dispatch({
     type: uiConstants.CHANGE_PAGE_COLOR,
-    themeColor: color,
+    themeColor: JSON.stringify(color),
   });
+  localStorage.setItem('themeColor', JSON.stringify(color));
 };
 
 const uiActions = {
