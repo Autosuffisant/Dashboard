@@ -77,13 +77,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Layout = ({
-  changeColor, ThemeColor, currentPage, location, children,
+  changeColor, themeColor, currentPage, location, children,
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [colorMenu, setColorMenu] = useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const [currentThemeColor, setcurrentThemeColor] = useState(ThemeColor);
+  const [currentThemeColor, setcurrentThemeColor] = useState(themeColor);
 
   useEffect(() => {
   }, []);
@@ -226,6 +226,7 @@ const Layout = ({
         open={open}
       >
         <Links
+          color={currentThemeColor}
           selectedRoute={location.pathname}
           handleDrawerClose={() => setOpen(false)}
         />
@@ -242,14 +243,15 @@ Layout.propTypes = {
   currentPage: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   location: PropTypes.object.isRequired,
-  ThemeColor: PropTypes.string.isRequired,
+  themeColor: PropTypes.string.isRequired,
   changeColor: PropTypes.func.isRequired,
 };
 
 function mapState(state) {
-  const { currentThemeColor } = state.ui;
+  const { themeColor, currentPage } = state.ui;
+  const { userId } = state.auth.authData._id;
   return {
-    currentThemeColor,
+    themeColor, userId, currentPage,
   };
 }
 
