@@ -5,6 +5,7 @@ import {
   userReducer,
   authenticationReducer,
   uiReducer,
+  widgetReducer,
 } from './reducers/index';
 
 let middlewares;
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
   user: userReducer,
   auth: authenticationReducer,
   ui: uiReducer,
+  widget: widgetReducer,
 });
 
 const rootReducer = (state, action) => {
