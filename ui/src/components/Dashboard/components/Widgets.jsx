@@ -126,7 +126,7 @@ const Widgets = ({
           <Container className={classes.widget}>
             <Grid container direction="row" className={classes.widgetBody}>
               <Grid item xs={12}>
-                <Typography className={classes.title}>{`Widget ${item.id || ':('}`}</Typography>
+                <Typography className={classes.title}>{`${item.id || ':('}`}</Typography>
               </Grid>
             </Grid>
           </Container>
