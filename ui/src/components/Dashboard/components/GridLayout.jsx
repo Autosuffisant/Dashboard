@@ -8,7 +8,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from '@material-ui/core';
+import { CircularProgress, Grid } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { DndContext } from '@dnd-kit/core';
@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   container: {
-    backgroundColor: theme.palette.background.paper,
     borderRadius: 15,
     minHeight: '40vh',
     paddingTop: theme.spacing(4),
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const GridLayout = ({
-  setWidgetList, removeWidget, edit, widgets,
+  setWidgetList, removeWidget, edit, widgets, darkMode,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -78,10 +77,14 @@ const GridLayout = ({
     <Grid
       container
       className={classes.container}
+      style={{
+        backgroundColor: darkMode ? theme.palette.background.paper : '#fff',
+        boxShadow: darkMode ? '' : '0px 5px 15px #bbb',
+      }}
       spacing={4}
     >
       {
-        edit ? widgetList.map ? (
+        edit ? widgetList ? (
           <Grid container>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="droppable" direction="horizontal">
@@ -116,11 +119,12 @@ const GridLayout = ({
               </Droppable>
             </DragDropContext>
           </Grid>
-        ) : null : widgetList.map ? (
+        ) : null : widgetList ? (
           <Grid container>
             {
-              widgetList.map((item) => (
+              widgetList.map((item, key) => (
                 <Widgets
+                  key={item.id}
                   item={item}
                   removeSelf={removeWidget}
                   edit={edit}
@@ -141,6 +145,7 @@ GridLayout.propTypes = {
   removeWidget: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
   widgets: PropTypes.array.isRequired,
+  darkMode: PropTypes.bool.isRequired,
 };
 
 export default GridLayout;
