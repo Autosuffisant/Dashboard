@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import uiActions from '../../redux/actions/uiActions';
+import widgetActions from '../../redux/actions/widgetActions';
 import WelcomeTitle from './components/WelcomeTitle';
 import GridLayout from './components/GridLayout';
 import AddWidget from './components/AddWIdget';
@@ -35,59 +36,59 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Dashboard = ({
-  changePageTitle, username,
+  changePageTitle, username, darkMode, updateWidgets, getWidgets, widgets,
 }) => {
   const classes = useStyles();
 
   const [edit, setEdit] = useState(false);
-  const [widgetList, setWidgetList] = useState([{ id: 'item-0' }]);
-  const [widgetID, setWidgetID] = useState(1);
 
   const addNewWidget = () => {
-    const newWidgetList = [...widgetList];
+    const newWidgetList = [...widgets.widgets];
+    const randomValues = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-    newWidgetList.push({ id: `item-${widgetID}` });
+    newWidgetList.push({ id: `widget-${Array(10).fill(randomValues).map((x) => x[Math.floor(Math.random() * x.length)]).join('')}` });
 
-    setWidgetID(widgetID + 1);
-    setWidgetList(newWidgetList);
+    updateWidgets(newWidgetList);
   };
 
   const removeLastWidget = () => {
-    const temp = [...widgetList];
+    const temp = [...widgets.widgets];
 
     temp.pop();
-    setWidgetList(temp);
+    updateWidgets(temp);
   };
 
   const removeWidget = (id) => {
-    const temp = [...widgetList];
+    const temp = [...widgets.widgets];
 
     const index = temp.findIndex((element) => id === element.id);
     temp.splice(index, 1);
-    setWidgetList(temp);
+    updateWidgets(temp);
   };
 
   const switchEdit = () => {
     setEdit(!edit);
   };
+
   useEffect(() => {
     changePageTitle('Dashboard');
-    addNewWidget();
+    getWidgets();
   }, []);
 
   return (
     <>
       <Grid container className={classes.container}>
         <Grid item xs={12} md={12}>
-          <Grid xs={12} className={classes.greeting}>
+          <Grid className={classes.greeting}>
             <WelcomeTitle username={username} />
           </Grid>
-          <Grid xs={12}>
+          <Grid>
             <GridLayout
-              setWidgetList={setWidgetList}
+              setWidgetList={updateWidgets}
               removeWidget={removeWidget}
-              widgets={widgetList}
+              widgets={widgets.widgets}
               edit={edit}
+              darkMode={darkMode}
               className={classes.content}
             />
           </Grid>
@@ -105,20 +106,32 @@ const Dashboard = ({
   );
 };
 
+Dashboard.defaultProps = {
+  widgets: { state: 'Loading' },
+};
+
 Dashboard.propTypes = {
   changePageTitle: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
+  darkMode: PropTypes.bool.isRequired,
+  updateWidgets: PropTypes.func.isRequired,
+  getWidgets: PropTypes.func.isRequired,
+  widgets: PropTypes.object,
 };
 
 function mapState(state) {
   const { username } = state.user.userData;
+  const { darkMode } = state.ui;
+  const { widgets } = state.widget;
   return {
-    username,
+    username, darkMode, widgets,
   };
 }
 
 const actionCreators = {
   changePageTitle: uiActions.changePageTitle,
+  updateWidgets: widgetActions.updateWidgets,
+  getWidgets: widgetActions.getWidgets,
 };
 
 export default connect(mapState, actionCreators)(Dashboard);
