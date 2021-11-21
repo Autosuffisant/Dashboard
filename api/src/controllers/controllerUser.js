@@ -188,6 +188,44 @@ export function updateUser(req, res) {
 }
 
 /*
+  CRUD method: Search an user with his id in the DB,
+  Update his widgets and send back a confirmation.
+*/
+export function updateUserWidgets(req, res) {
+  User.findOneAndUpdate({ _id: req.params.id }, { widgets: req.body }, { new: true }, (error, user) => {
+    if (error) {
+      res.status(400).json(error);
+    }
+    else if (user === null) {
+      res.status(400).json({ error: 'Server was unable to find this user' });
+    }
+    else {
+      res.status(200).json({ message: 'The widgets have been successfully updated' });
+    }
+  })
+}
+
+/*
+  CRUD method: Search a user object with his id in the DB and send back it's widget configuration.
+*/
+export function getUserWidgets(req, res) {
+  User.findById(req.params.id)
+    .select('widgets')
+    .lean()
+    .exec((error, user) => {
+      if (error) {
+        res.status(404).json(error);
+      }
+      else if (user === null) {
+        res.status(404).json({ error: 'Server was unable to find this User' });
+      }
+      else {
+        res.status(200).json(user);
+      }
+    });
+}
+
+/*
   CRUD method: Search a content object with his id in the DB,
   remove it and send back a confirmation.
 */
