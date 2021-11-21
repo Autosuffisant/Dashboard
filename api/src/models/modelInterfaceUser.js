@@ -17,6 +17,7 @@ const schemaInterfaceUser = new Schema({
       r: 0, g: 17, b: 170, a: 1.0
     }
   },
+  widgets: Object,
   // Variable used for future mail verification
   isVerified: { type: Boolean, default: false },
   admin: { Boolean, default: false },
