@@ -9,7 +9,9 @@ import {
   userLogin,
   emailAvailable,
   userSearch,
-  userListSearch
+  userListSearch,
+  updateUserWidgets,
+  getUserWidgets
 } from '../controllers/controllerUser';
 
 import auth from '../controllers/checkAuth';
@@ -82,7 +84,7 @@ const routeUser = (app) => {
      * @apiSuccess (200) {String} message Email is available
      */
     .post(emailAvailable);
-  app.route('/user/search/:s/')
+    app.route('/user/search/:s/')
     /**
      * @api {get} /user/:id Request a user with id
      * @apiName getUser
@@ -104,7 +106,7 @@ const routeUser = (app) => {
      * @apiSuccess (200) {ObjectId} _id Unique id.
      */
     .get(auth.required, auth.admin, userSearch);
-  app.route('/user/search/:s/:sc/')
+    app.route('/user/search/:s/:sc/')
     /**
      * @api {get} /user/:id Request a user with id
      * @apiName getUser
@@ -126,7 +128,7 @@ const routeUser = (app) => {
      * @apiSuccess (200) {ObjectId} _id Unique id.
      */
     .get(auth.required, auth.admin, userListSearch);
-  app.route('/user/:id')
+    app.route('/user/:id')
     /**
      * @api {get} /user/:id Request a user with id
      * @apiName getUser
@@ -187,6 +189,27 @@ const routeUser = (app) => {
      */
 
     .delete(auth.required, deleteUser);
+    app.route('/user/widgets/:id')
+    /**
+     * @api {get} /user/widgets/:id gets a user's widgets with id
+     * @apiName getUserWidgets
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {Array} Widgets the user saved
+     */
+    .get(auth.required, getUserWidgets)
+    /**
+     * @api {put} /user/widgets/:id Update a user's widgets with id
+     * @apiName updateUserWidgets
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiParam {Array} Widgets the user added or chose
+     *
+     * @apiSuccess (200) {Array} Widgets the user added or chose
+     */
+    .put(auth.required, updateUserWidgets);
 };
 
 export default routeUser;
