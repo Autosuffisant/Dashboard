@@ -37,12 +37,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Menu = ({
-  handleDrawerClose, selectedRoute,
+  handleDrawerClose, selectedRoute, color,
 }) => {
   const classes = useStyles();
   return (
     <div className={classes.drawerContainer}>
-      <div className={classes.drawerHeader}>
+      <div style={{ backgroundColor: color }} className={classes.drawerHeader}>
         <IconButton onClick={handleDrawerClose}>
           <ChevronLeftIcon />
         </IconButton>
@@ -86,6 +86,7 @@ const Menu = ({
 Menu.propTypes = {
   handleDrawerClose: PropTypes.func.isRequired,
   selectedRoute: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
 };
 
 export default Menu;
