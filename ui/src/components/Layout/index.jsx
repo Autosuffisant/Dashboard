@@ -17,7 +17,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import PaletteIcon from '@material-ui/icons/Palette';
 import { connect } from 'react-redux';
-import { TwitterPicker } from 'react-color';
+import { CirclePicker } from 'react-color';
 import uiActions from '../../redux/actions/uiActions';
 import Links from './components/Menu';
 import userActions from '../../redux/actions/userActions';
@@ -74,6 +74,10 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  paletteMenu: {
+    padding: theme.spacing(2),
+    overflowY: 'hidden',
+  },
 }));
 
 const Layout = ({
@@ -81,7 +85,7 @@ const Layout = ({
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [colorMenu, setColorMenu] = useState(false);
+  const [anchorElColorMenu, setColorMenu] = useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [currentThemeColor, setcurrentThemeColor] = useState(themeColor);
 
@@ -204,15 +208,18 @@ const Layout = ({
       </AppBar>
       {renderMobileMenu}
       <Menu
-        id="menu-color"
-        anchorEl={colorMenu}
-        keepMounted
-        open={Boolean(colorMenu)}
+        anchorEl={anchorElColorMenu}
+        open={Boolean(anchorElColorMenu)}
         onClose={handleClose}
       >
-        <TwitterPicker
+        <CirclePicker
+          className={classes.paletteMenu}
           color={currentThemeColor}
           onChangeComplete={handleColor}
+          width={250}
+          colors={
+            ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#607d8b']
+          }
         />
       </Menu>
       <ProfileMenu handleMenuClose={handleProfileMenuClose} anchorEl={anchorEl} />
