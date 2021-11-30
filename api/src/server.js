@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { connectToDashboardDB } from './db';
@@ -9,6 +10,8 @@ import routeUser from './routes/routeUser';
 
 const express = require('express');
 const paginate = require('express-paginate');
+const session = require('express-session');
+const passport = require('passport');
 const dotenv = require('dotenv');
 var logger = require('morgan');
 const mongoose = require('mongoose');
@@ -17,19 +20,25 @@ dotenv.config();
 
 const app = express();
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const debugServer = require('debug')('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const config = require('config');
 const compression = require('compression');
 
 const port = 8080;
 
-connectToDashboardDB((err, client) => {
+connectToDashboardDB((err) => {
   if (err) console.log(err);
 
   app.use(cors());
-  app.use(bodyParser.json());
+  app.use(session({
+    secret: 'cats'
+  }));
+  app.use(cookieParser());
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(bodyParser());
   if (app.get('env') === 'development') {
     app.use(logger('tiny'));
   }
