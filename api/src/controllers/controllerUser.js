@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-loop-func */
 /* eslint-disable consistent-return */
@@ -141,7 +142,6 @@ export function addNewUser(req, res) {
       return res.status(409).json({ error: 'This email is already used ' });
     }
     const finalUser = new User(req.body);
-    console.log(req.body);
     finalUser.username = req.body.username;
     finalUser.email = req.body.email;
     finalUser.setPassword(req.body.password);
@@ -202,7 +202,7 @@ export function updateUserWidgets(req, res) {
     else {
       res.status(200).json({ message: 'The widgets have been successfully updated' });
     }
-  })
+  });
 }
 
 /*
@@ -282,4 +282,10 @@ export async function userLogin(req, res) {
   catch (err) {
     res.status(500).json({ error: err });
   }
+}
+
+const passport = require('../controllers/controllerPassportSpotify');
+
+export function authSpotify(req, res) {
+  passport.authenticate('spotify', { state: req.params });
 }
