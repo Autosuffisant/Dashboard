@@ -1,3 +1,6 @@
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable func-names */
+/* eslint-disable no-param-reassign */
 /* eslint-disable max-len */
 
 import {
@@ -11,10 +14,16 @@ import {
   userSearch,
   userListSearch,
   updateUserWidgets,
-  getUserWidgets
+  getUserWidgets,
+  authSpotify
 } from '../controllers/controllerUser';
 
 import auth from '../controllers/checkAuth';
+import schemaUser from '../models/modelUser';
+import { dashboardnode } from '../db';
+
+const User = dashboardnode.model('User', schemaUser);
+const passport = require('../controllers/controllerPassportSpotify');
 
 const routeUser = (app) => {
   app.route('/user')
@@ -84,7 +93,7 @@ const routeUser = (app) => {
      * @apiSuccess (200) {String} message Email is available
      */
     .post(emailAvailable);
-    app.route('/user/search/:s/')
+  app.route('/user/search/:s/')
     /**
      * @api {get} /user/:id Request a user with id
      * @apiName getUser
@@ -106,7 +115,7 @@ const routeUser = (app) => {
      * @apiSuccess (200) {ObjectId} _id Unique id.
      */
     .get(auth.required, auth.admin, userSearch);
-    app.route('/user/search/:s/:sc/')
+  app.route('/user/search/:s/:sc/')
     /**
      * @api {get} /user/:id Request a user with id
      * @apiName getUser
@@ -128,7 +137,7 @@ const routeUser = (app) => {
      * @apiSuccess (200) {ObjectId} _id Unique id.
      */
     .get(auth.required, auth.admin, userListSearch);
-    app.route('/user/:id')
+  app.route('/user/:id')
     /**
      * @api {get} /user/:id Request a user with id
      * @apiName getUser
@@ -189,7 +198,7 @@ const routeUser = (app) => {
      */
 
     .delete(auth.required, deleteUser);
-    app.route('/user/widgets/:id')
+  app.route('/user/widgets/:id')
     /**
      * @api {get} /user/widgets/:id gets a user's widgets with id
      * @apiName getUserWidgets
@@ -210,6 +219,40 @@ const routeUser = (app) => {
      * @apiSuccess (200) {Array} Widgets the user added or chose
      */
     .put(auth.required, updateUserWidgets);
+  app.route('/auth/spotify/')
+    /**
+     * @api {get} /auth/spotify/:id Auth an user with spotify's API by it's id
+     * @apiName passport.authenticate('spotify')
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {Array} Success message
+     */
+    .get((req, res, next) => {
+      console.log(req.params);
+      req.session.uuid = req.query.id;
+      console.log(req.session.uuid);
+      passport.authenticate('spotify')(req, res, next);
+    });
+  app.route('/auth/spotify/callback')
+    /**
+     * @api {get} auth/spotify/callback Auth an user with spotify's API by it'd id
+     * @apiName passport.authenticate('spotify')
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {Array} Success message
+     */
+    .get(
+      passport.authenticate('spotify'),
+      function (req, res) {
+        console.log(req.session.uuid);
+        User.findOneAndUpdate({ _id: req.session.uuid },
+          { 'spotify.token': req.session.accessToken },
+          { new: true });
+        res.redirect('http://localhost:3000/dashboard');
+      }
+    );
 };
 
 export default routeUser;
