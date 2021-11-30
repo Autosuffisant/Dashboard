@@ -56,9 +56,6 @@ const connectWithRetry = () => {
 connectWithRetry();
 
 routeAuth(app);
-routeAdministrator(app);
-routeUser(app);
-routeCountry(app);
 routeLanguage(app);
 const port = 8080;
 
