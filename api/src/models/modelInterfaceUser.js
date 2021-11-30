@@ -17,14 +17,15 @@ const schemaInterfaceUser = new Schema({
       r: 0, g: 17, b: 170, a: 1.0
     }
   },
+  spotify: Object,
+  // Widgets layout
   widgets: Object,
   // Variable used for future mail verification
   isVerified: { type: Boolean, default: false },
-  admin: { Boolean, default: false },
+  admin: { Boolean, default: false }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 schemaInterfaceUser.plugin(mongooseDelete,
   { deletedAt: true, deletedBy: true, overrideMethods: true });
-
 
 export default schemaInterfaceUser;
