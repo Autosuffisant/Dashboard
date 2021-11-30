@@ -283,9 +283,3 @@ export async function userLogin(req, res) {
     res.status(500).json({ error: err });
   }
 }
-
-const passport = require('../controllers/controllerPassportSpotify');
-
-export function authSpotify(req, res) {
-  passport.authenticate('spotify', { state: req.params });
-}
