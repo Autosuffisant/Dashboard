@@ -9,12 +9,17 @@ import {
   useMediaQuery,
   Slide,
   Container,
+  Typography,
 } from '@material-ui/core';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
+import { SiSpotify } from 'react-icons/si';
+// import { IoMdAdd, IoMdRemove } from 'react-icons/io';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
+import widgetActions from '../../../redux/actions/widgetActions';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -29,10 +34,14 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '40vh',
     maxHeight: '40vh',
   },
+  syncButton: {
+    minWidth: '200px',
+    padding: theme.spacing(1.5),
+  },
 }));
 
 const AddWidget = ({
-  setEdit, edit, AddNewWidget, RemoveLastWidget,
+  setEdit, edit, AddNewWidget, authSpotify,
 }) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -81,15 +90,29 @@ const AddWidget = ({
       >
         <DialogContent>
           <Container>
-            <Grid container direction="row" spacing={4}>
-              <Grid item>
-                <Button variant="contained" onClick={AddNewWidget} color="primary">
-                  Add widget
+            <Grid container display="flex" justifyContent="space-around" spacing={4}>
+              <Grid item xs={4}>
+                <Button className={classes.syncButton} variant="contained" onClick={authSpotify} color="primary">
+                  <SiSpotify size={30} style={{ marginRight: 10 }} />
+                  <Typography variant="body1">
+                    Link to Spotify
+                  </Typography>
                 </Button>
               </Grid>
-              <Grid item>
-                <Button variant="contained" onClick={RemoveLastWidget} color="secondary">
-                  Remove last widget
+              <Grid item xs={4}>
+                <Button className={classes.syncButton} variant="contained" onClick={AddNewWidget} color="primary">
+                  <SiSpotify size={30} style={{ marginRight: 10 }} />
+                  <Typography variant="body1">
+                    Add
+                  </Typography>
+                </Button>
+              </Grid>
+              <Grid item xs={4}>
+                <Button className={classes.syncButton} variant="contained" onClick={AddNewWidget} color="primary">
+                  <SiSpotify size={30} style={{ marginRight: 10 }} />
+                  <Typography variant="body1">
+                    Add
+                  </Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -109,7 +132,20 @@ AddWidget.propTypes = {
   setEdit: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
   AddNewWidget: PropTypes.func.isRequired,
-  RemoveLastWidget: PropTypes.func.isRequired,
+  authSpotify: PropTypes.func.isRequired,
 };
 
-export default AddWidget;
+function mapState(state) {
+  const { username } = state.user.userData;
+  const { darkMode } = state.ui;
+  const { widgets } = state.widget;
+  return {
+    username, darkMode, widgets,
+  };
+}
+
+const actionCreators = {
+  authSpotify: widgetActions.authSpotify,
+};
+
+export default connect(mapState, actionCreators)(AddWidget);
