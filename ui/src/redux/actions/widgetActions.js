@@ -50,7 +50,7 @@ const updateWidgets = (widgets) => (dispatch, getState) => {
   return widgetService.updateWidgets(state.auth.authData._id, widgets)
     .then(
       (successWidgets) => {
-        dispatch(getWidgets(state.auth._id));
+        dispatch(getWidgets(state.auth.authData._id));
         dispatch(success(successWidgets));
       },
       (error) => {
@@ -60,9 +60,14 @@ const updateWidgets = (widgets) => (dispatch, getState) => {
     );
 };
 
+const authSpotify = () => (dispatch, getState) => {
+  window.open(`http://localhost:8080/auth/spotify/?id=${getState().auth.authData._id}`);
+};
+
 const widgetActions = {
   updateWidgets,
   getWidgets,
+  authSpotify,
 };
 
 export default widgetActions;
