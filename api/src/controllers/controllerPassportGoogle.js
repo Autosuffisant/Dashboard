@@ -36,10 +36,8 @@ passport.use(
       callbackURL: 'http://localhost:8080/auth/google/callback',
       passReqToCallback: true
     },
-    function (req, accessToken, refreshToken, expiresIn, profile, done) {
-      console.log(req.session.uuid);
-      console.log(accessToken);
-      req.session.accessToken = accessToken;
+    function (req, accessToken, refreshToken, profile, done) {
+      req.session.profile = profile;
       return done(null, profile);
     }
   )
