@@ -1,6 +1,9 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
+import SpotifyWebApi from 'spotify-web-api-js';
 import widgetConstants from '../constants/widgetConstants';
+import widget from '../reducers/widgetReducer';
 import widgetService from '../services/widgetServices';
 
 const getWidgets = () => (dispatch, getState) => {
@@ -60,14 +63,37 @@ const updateWidgets = (widgets) => (dispatch, getState) => {
     );
 };
 
+const initSpotifyAPI = () => (dispatch, getState) => {
+  function initializeAPI(api) { return { type: widgetConstants.INIT_SPOTIFY_API, api }; }
+  function request() { return { type: widgetConstants.GET_CREDENTIALS_REQUEST }; }
+  function success(tokens) { return { type: widgetConstants.GET_CREDENTIALS_SUCCESS, tokens }; }
+  function failure(error) { return { type: widgetConstants.GET_WIDGET_FAILURE, error }; }
+
+  dispatch(request());
+  return widgetService.getWidgetsCredentials(getState().auth.authData._id)
+    .then(
+      (credentialsSuccess) => {
+        const spotifyAPI = new SpotifyWebApi();
+        spotifyAPI.setAccessToken(credentialsSuccess.spotify.token);
+        dispatch(success(credentialsSuccess));
+        dispatch(initializeAPI(spotifyAPI));
+      },
+      (error) => {
+        if (error) dispatch(failure(error.toString()));
+        else dispatch(failure('Server did not respond'));
+      },
+    );
+};
+
 const authSpotify = () => (dispatch, getState) => {
-  window.open(`http://localhost:8080/auth/spotify/?id=${getState().auth.authData._id}`);
+  window.location.href = `http://localhost:8080/auth/spotify/?id=${getState().auth.authData._id}`;
 };
 
 const widgetActions = {
   updateWidgets,
   getWidgets,
   authSpotify,
+  initSpotifyAPI,
 };
 
 export default widgetActions;
