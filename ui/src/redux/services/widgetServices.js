@@ -17,9 +17,17 @@ function updateWidgets(user, widgets) {
     .catch((error) => Promise.reject(error.response.data.message));
 }
 
+function getWidgetsCredentials(user) {
+  return apiClient.get(`user/credentials/${user}`)
+    .then(handleResponse)
+    .then((res) => res)
+    .catch((error) => Promise.reject(error.response.data.message));
+}
+
 const widgetServices = {
   getWidgets,
   updateWidgets,
+  getWidgetsCredentials,
 };
 
 export default widgetServices;
