@@ -32,7 +32,7 @@ export function getUsers(req, res) {
 */
 export function getUser(req, res) {
   User.findById(req.params.id)
-    .select('username email admin isVerified')
+    .select('username email admin isVerified spotify github youtube weather')
     .lean()
     .exec((error, user) => {
       if (error) {
@@ -267,6 +267,37 @@ export async function userLogin(req, res) {
           returns a promise including a JWT and the redirect indicator as well
           as userID upon resolution.
          */
+    if (req.body.rememberMe === null
+      || req.body.rememberMe === undefined || req.body.rememberMe === false) {
+      users[0].toAuthJSONlogin(false)
+        .then(loginRes => res.status(200).json(loginRes))
+        .catch(err => res.status(404).json({ error: err.toString() }));
+    }
+    else {
+      users[0].toAuthJSONlogin(true)
+        .then(loginRes => res.status(200).json(loginRes))
+        .catch(err2 => res.status(404).json({ error: err2.toString() }));
+    }
+  }
+  catch (err) {
+    res.status(500).json({ error: err });
+  }
+}
+
+export async function userLoginOAuth(req, res) {
+  if (req.body.oauthid === null) {
+    return res.status(400).json({ error: 'Unable to find oauthid in body' });
+  }
+  try {
+    const users = await User.find({ 'google.token': req.body.oauthid }).exec();
+    if (users.length < 1) {
+      return res.status(401).json({ message: 'Auth failed: Multiple users' });
+    }
+    /*
+      toAuthJSONlogin method takes a rememberMe boolean as parameter and
+      returns a promise including a JWT and the redirect indicator as well
+      as userID upon resolution.
+    */
     if (req.body.rememberMe === null
       || req.body.rememberMe === undefined || req.body.rememberMe === false) {
       users[0].toAuthJSONlogin(false)
