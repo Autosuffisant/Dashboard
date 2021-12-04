@@ -57,6 +57,7 @@
     "node-excel-export": "^1.4.4",
     "nodemailer": "^4.7.0",
     "passport": "^0.5.0",
+    "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "passport-spotify": "^2.0.0",
     "pdf-creator-node": "^2.2.2",
