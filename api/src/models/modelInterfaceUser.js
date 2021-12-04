@@ -1,6 +1,9 @@
 /* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
 
+import extendSchema from '../utils/extendSchema';
+import schemaToken from './modelToken';
+
 const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
 
@@ -17,7 +20,29 @@ const schemaInterfaceUser = new Schema({
       r: 0, g: 17, b: 170, a: 1.0
     }
   },
-  spotify: Object,
+  // Third party applications
+  spotify: {
+    type: Object,
+    default: {
+      token: null
+    }
+  },
+  google: {
+    type: Object,
+    token: String
+  },
+  github: {
+    type: Object,
+    default: {
+      token: null
+    }
+  },
+  reddit: {
+    type: Object,
+    default: {
+      token: null
+    }
+  },
   // Widgets layout
   widgets: Object,
   // Variable used for future mail verification
