@@ -37,6 +37,13 @@ export default function authentication(state = initialState, action) {
         loggingError: false,
         loggingIn: true,
       };
+    case userConstants.LOGIN_OAUTH_REQUEST:
+      return {
+        ...state,
+        loggingError: false,
+        loggingIn: true,
+        oauth: action.oauth,
+      };
     case userConstants.LOGIN_SUCCESS:
       return {
         ...state,
