@@ -2,6 +2,7 @@ import widgetConstants from '../constants/widgetConstants';
 
 const initialState = {
   widgets: [],
+  spotify: false,
 };
 
 export default function widget(state = initialState, action) {
@@ -37,6 +38,12 @@ export default function widget(state = initialState, action) {
       return {
         ...state,
         requesting: false,
+      };
+    case widgetConstants.INIT_SPOTIFY_API:
+      return {
+        ...state,
+        spotify: true,
+        spotifyAPI: action.api,
       };
     default:
       return state;
