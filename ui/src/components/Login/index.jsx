@@ -10,35 +10,18 @@ import {
   Paper, Button, Grid, Box, Snackbar,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
-import { useMsal } from '@azure/msal-react';
 import { connect } from 'react-redux';
+import { FcGoogle } from 'react-icons/fc';
 import userActions from '../../redux/actions/userActions';
-import { loginRequest, graphConfig } from '../../azure/authConfig';
 import LoginForm from './components/LoginForm';
 import Copyright from './components/Copyright';
 import SignUp from '../SignUp';
-import userServices from '../../redux/services/userServices';
 
 const qs = require('qs');
 
 function Alert(props) {
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-async function callMsGraph(accessToken) {
-  const headers = new Headers();
-  const bearer = `Bearer ${accessToken}`;
-
-  headers.append('Authorization', bearer);
-  headers.append('Access-Control-Allow-Origin', '*');
-
-  const options = {
-    method: 'GET',
-    headers,
-  };
-  return fetch(graphConfig.graphMeEndpoint, options)
-    .then((response) => response.json());
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -96,11 +79,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = ({
-  location, setAzureToken, login,
+  location, authGoogle, loginOAuth,
 }) => {
-  const { instance, accounts } = useMsal();
-  const [graphData, setGraphData] = useState(null);
-  const [azureSignup, setAzureSignup] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [values, setValues] = useState({
     forgotPassword: false,
@@ -117,30 +97,7 @@ const Login = ({
     setOpen(false);
   };
 
-  const connectAzure = (tokenAzure, code, sem) => {
-    setAzureToken(tokenAzure);
-    callMsGraph(tokenAzure).then((_response) => {
-      const tmpResponse = { ..._response, code: code != null ? code : '', sem: sem != null ? sem : '' };
-      setGraphData(tmpResponse);
-      userServices.verifyEmail(_response.userPrincipalName)
-        .then(() => {
-          setAzureSignup(true);
-        })
-        .catch(() => {
-          login(_response.userPrincipalName, _response.id, true)
-            .then((response) => {
-              if (response === undefined) {
-                setOpen(true);
-              } else {
-                setAzureSignup(false);
-                setGraphData(null);
-              }
-            });
-        });
-    });
-  };
-
-  const RequestAccessToken = (code, sem) => {
+  /* const RequestAccessToken = (code, sem) => {
     const accountsTest = instance.getAllAccounts();
     const request = {
       ...loginRequest,
@@ -158,19 +115,20 @@ const Login = ({
             setGraphData(null);
           });
       });
-  };
+  }; */
 
-  const handleLogin = (code, sem) => {
+  /* const handleLogin = (code, sem) => {
     instance.loginRedirect(loginRequest).then(() => {
       RequestAccessToken(code, sem);
     }).catch(() => {
       setAzureSignup(false);
       setGraphData(null);
     });
-  };
+  }; */
 
   useEffect(() => {
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
+    console.log(location.search);
     setValues({ ...values, params });
     /*
     const code = params.code !== undefined && params.code !== null ? atob(params.code) : '';
@@ -186,7 +144,9 @@ const Login = ({
       handleLogin(code, sem);
     }
     */
-  }, [location, accounts]);
+    console.log(params);
+    if (params.id) loginOAuth(params.id, false);
+  }, [location]);
 
   const classes = useStyles();
   return (
@@ -204,10 +164,9 @@ const Login = ({
               {!values.createAccount && (<img src="/img/logo.png" width="200" height="200" alt="Dashboard Logo" />)}
               <div className={classes.paper}>
                 {
-                  (values.createAccount || azureSignup
+                  (values.createAccount
                     ? (
                       <SignUp
-                        graphData={graphData}
                         setCreateAccount={() => setValues({ ...values, createAccount: false })}
                       />
                     )
@@ -219,31 +178,31 @@ const Login = ({
                   )
                 }
               </div>
-              <Grid container style={{ marginTop: '1em' }}>
-                <Grid item xs>
-                  {!values.forgotPassword ? (
-                    <>
-                      <Grid container style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                        { !azureSignup || !values.createAccount ? (
-                          <Button
-                            onClick={() => handleLogin(null, null)}
-                            style={{ marginTop: '30px' }}
-                          >
-                            <img src="img/microsoft_long.svg" title="Connection to MS Azure" alt="azure" />
-                          </Button>
-                        )
-                          : null}
-                      </Grid>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={() => setValues({ ...values, forgotPassword: false })}
-                      color="primary"
-                    >
-                      Back
-                    </Button>
-                  )}
-                </Grid>
+              <Grid item xs={12}>
+                {!values.forgotPassword ? (
+                  <>
+                    <Grid container style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      {!values.createAccount ? (
+                        <Button
+                          onClick={() => authGoogle()}
+                          style={{ marginTop: '30px' }}
+                          variant="contained"
+                        >
+                          <FcGoogle style={{ marginRight: 10 }} />
+                          Sign in with Google
+                        </Button>
+                      )
+                        : null}
+                    </Grid>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => setValues({ ...values, forgotPassword: false })}
+                    color="primary"
+                  >
+                    Back
+                  </Button>
+                )}
               </Grid>
               <Box mt={3}>
                 <Copyright />
@@ -258,8 +217,8 @@ const Login = ({
 
 Login.propTypes = {
   location: PropTypes.object.isRequired,
-  setAzureToken: PropTypes.func.isRequired,
-  login: PropTypes.func.isRequired,
+  authGoogle: PropTypes.func.isRequired,
+  loginOAuth: PropTypes.func.isRequired,
 };
 
 function mapState(state) {
@@ -270,7 +229,9 @@ function mapState(state) {
 const actionCreators = {
   setAzureToken: userActions.setAzureToken,
   login: userActions.login,
+  loginOAuth: userActions.loginOAuth,
   clearLogin: userActions.clearLogin,
+  authGoogle: userActions.authGoogle,
 };
 
 export default connect(mapState, actionCreators)(Login);
