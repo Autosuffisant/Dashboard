@@ -92,7 +92,7 @@ const AddWidget = ({
           <Container>
             <Grid container display="flex" justifyContent="space-around" spacing={4}>
               <Grid item xs={4}>
-                <Button className={classes.syncButton} variant="contained" onClick={authSpotify} color="primary">
+                <Button className={classes.syncButton} variant="contained" onClick={authSpotify} style={{ backgroundColor: '#1DB954' }}>
                   <SiSpotify size={30} style={{ marginRight: 10 }} />
                   <Typography variant="body1">
                     Link to Spotify
