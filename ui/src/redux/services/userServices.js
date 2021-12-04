@@ -13,6 +13,13 @@ function login(email, password) {
     .catch((error) => Promise.reject(error.response.data.message));
 }
 
+function loginOAuth(oauthid) {
+  return axios.post('user/login/oauth', { oauthid })
+    .then(handleResponse)
+    .then((user) => user)
+    .catch((error) => Promise.reject(error.response.data.message));
+}
+
 function getUserById(user) {
   return apiClient.get(`/user/${user}`)
     .then(handleResponse)
@@ -73,6 +80,7 @@ function logout() {
 
 const userService = {
   login,
+  loginOAuth,
   createUser,
   verifyEmail,
   getUserById,
