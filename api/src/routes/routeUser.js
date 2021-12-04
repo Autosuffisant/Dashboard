@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
 /* eslint-disable no-param-reassign */
@@ -10,12 +11,12 @@ import {
   updateUser,
   deleteUser,
   userLogin,
+  userLoginOAuth,
   emailAvailable,
   userSearch,
   userListSearch,
   updateUserWidgets,
-  getUserWidgets,
-  authSpotify
+  getUserWidgets
 } from '../controllers/controllerUser';
 
 import auth from '../controllers/checkAuth';
@@ -23,7 +24,8 @@ import schemaUser from '../models/modelUser';
 import { dashboardnode } from '../db';
 
 const User = dashboardnode.model('User', schemaUser);
-const passport = require('../controllers/controllerPassportSpotify');
+const passportSpotify = require('../controllers/controllerPassportSpotify');
+const passportGoogle = require('../controllers/controllerPassportGoogle');
 
 const routeUser = (app) => {
   app.route('/user')
@@ -76,11 +78,27 @@ const routeUser = (app) => {
      * @apiSuccess (200) {ObjectId} _id Unique user id.
      * @apiSuccess (200) {String} email Email of the user.
      * @apiSuccess (200) {Boolean} finish Boolean if the user finished his test or not
-     * @apiSuccess (200) {ObjectId} testId ONLY IF FINISH IS FALSE, id of the test
      * @apiSuccess (200) {String} token JWT token generated.
      * @apiSuccess (200) {String} redirect Redirection to Test or Dashboard.k
      */
     .post(userLogin);
+  app.route('/user/login/oauth')
+    /**
+     * @api {post} /user/login/oauth Login as a user through OAuth system
+     * @apiName login
+     * @apiError 400 Server error
+     * @apiGroup Auth
+     *
+     * @apiParam {String} OAuth ID of the user in the body
+     * @apiParam {Boolean} rememberMe Boolean if token expires or not.
+     *
+     * @apiSuccess (200) {ObjectId} _id Unique user id.
+     * @apiSuccess (200) {String} email Email of the user.
+     * @apiSuccess (200) {Boolean} finish Boolean if the user finished his test or not
+     * @apiSuccess (200) {String} token JWT token generated.
+     * @apiSuccess (200) {String} redirect Redirection to Test or Dashboard.k
+     */
+    .post(userLoginOAuth);
   app.route('/user/email')
     /**
      * @api {get} /user/email/ Check if a email adress is available
@@ -229,10 +247,9 @@ const routeUser = (app) => {
      * @apiSuccess (200) {Array} Success message
      */
     .get((req, res, next) => {
-      console.log(req.params);
       req.session.uuid = req.query.id;
       console.log(req.session.uuid);
-      passport.authenticate('spotify')(req, res, next);
+      passportSpotify.authenticate('spotify')(req, res, next);
     });
   app.route('/auth/spotify/callback')
     /**
@@ -244,13 +261,67 @@ const routeUser = (app) => {
      * @apiSuccess (200) {Array} Success message
      */
     .get(
-      passport.authenticate('spotify'),
+      passportSpotify.authenticate('spotify'),
       function (req, res) {
         console.log(req.session.uuid);
-        User.findOneAndUpdate({ _id: req.session.uuid },
-          { 'spotify.token': req.session.accessToken },
-          { new: true });
+        User.findByIdAndUpdate(req.session.uuid, { spotify: { token: req.session.accessToken } }, { new: true }, (err, user) => {
+          user.spotify.token = req.session.accessToken;
+          console.log(user);
+          user.save();
+        });
         res.redirect('http://localhost:3000/dashboard');
+      }
+    );
+  app.route('/auth/google/')
+    /**
+     * @api {get} /auth/spotify/:id Auth an user with spotify's API by it's id
+     * @apiName passport.authenticate('spotify')
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {Array} Success message
+     */
+    .get((req, res, next) => {
+      passportGoogle.authenticate(
+        'google',
+        {
+          scope: [
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email'
+          ]
+        }
+      )(req, res, next);
+    });
+  app.route('/auth/google/callback')
+    /**
+     * @api {get} auth/spotify/callback Auth an user with spotify's API by it'd id
+     * @apiName passport.authenticate('spotify')
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {Array} Success message
+     */
+    .get(
+      passportGoogle.authenticate('google'),
+      function (req, res) {
+        const { profile } = req.session;
+        User.find({ 'google.token': profile.id }).exec((err, users) => {
+          console.log(profile);
+          if (users.length > 1) {
+            console.log(users);
+          }
+          if (users.length === 0) {
+            const finalUser = new User();
+            console.log(profile.id);
+            finalUser.google = { token: profile.id };
+            finalUser.username = profile.displayName;
+            finalUser.email = profile.emails[0].value;
+            finalUser.save((errorsave) => {
+              console.log(errorsave);
+            });
+          }
+          res.redirect(`http://localhost:3000/?id=${profile.id}`);
+        });
       }
     );
 };
