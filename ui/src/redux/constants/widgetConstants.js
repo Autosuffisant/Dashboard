@@ -13,6 +13,7 @@ const widgetConstants = {
   GET_CREDENTIALS_FAILURE: 'GET_CREDENTIALS_FAILURE',
 
   INIT_SPOTIFY_API: 'INIT_SPOTIFY_API',
+  INIT_GITHUB_API: 'INIT_GITHUB_API',
 };
 
 export default widgetConstants;
