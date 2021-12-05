@@ -19,7 +19,7 @@ The subject's requirements are the following
 
 The Dashboard is divided in three primary parts
 
-### Front / UI
+### Front / UI <img align="left" alt="C" width="36px" src="https://github.com/Autosuffisant/Autosuffisant/blob/master/assets/react-native-logo.png?raw=true" />
 
 The UI is the user seen application, allowing him to log-in, see his widgets and edit them as he wishes.
 
