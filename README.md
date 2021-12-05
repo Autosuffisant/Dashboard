@@ -66,7 +66,6 @@ Docker compose is used to handle the UI, the backend server and the database sim
 - GitHub
     - Usage of issues
     - Usage of milestones 
-    - Daily meeting reports
 
 - UI
     - A color theme changer
