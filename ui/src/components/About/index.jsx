@@ -14,13 +14,8 @@ const About = ({
   });
 
   const getData = async () => {
-    const res = await axios.get('https://geolocation-db.com/json/');
-    setaboutData({
-      ...aboutData,
-      client: { host: res.data.IPv4 },
-      server: { current_time: Math.floor(new Date() / 1000) },
-      services: [],
-    });
+    const res = await axios.get('http://localhost:8080/about.json');
+    setaboutData(res);
   };
 
   useEffect(() => {
@@ -30,7 +25,7 @@ const About = ({
   return (
     <div>
       <pre>
-        {JSON.stringify(aboutData, null, 2)}
+        {JSON.stringify(aboutData, null, 4)}
       </pre>
     </div>
   );
