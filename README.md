@@ -61,6 +61,10 @@ The widgets are by services:
 
 Docker compose is used to handle the UI, the backend server and the database simultaneously
 
+### Documentation
+
+Developer documentation of the whole application can be found [here](https://github.com/Autosuffisant/Dashboard/blob/28c825f9f1700ac5bfec63884760b417cf48a041/Dashboard%20manual.pdf)
+
 ## Bonuses
 
 - GitHub
