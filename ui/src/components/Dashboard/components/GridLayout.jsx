@@ -12,7 +12,12 @@ import { CircularProgress, Grid } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { DndContext } from '@dnd-kit/core';
-import Widgets from './Widgets';
+import WidgetTemplate from './WidgetTemplate';
+import SpotifyArtistSearch from './Widgets/SpotifyArtistSearch';
+import SpotifyTrackSearch from './Widgets/SpotifyTrackSearch';
+import SpotifyMe from './Widgets/SpotifyMe';
+import GithubUserSearch from './Widgets/GithubUserSearch';
+import GithubProjectSearch from './Widgets/GitHubProjectSearch';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -42,6 +47,7 @@ const GridLayout = ({
   const Title = 'Title';
   const HoverTitle = 'Hover !';
   const widgetList = widgets;
+  console.log(widgetList);
 
   const getListStyle = (isDraggingOver, itemsLength) => ({
     display: 'flex',
@@ -73,6 +79,23 @@ const GridLayout = ({
     );
   }
 
+  function setWidgetType(type) {
+    switch (type) {
+      case 'Spotify Track Search':
+        return <SpotifyTrackSearch />;
+      case 'Spotify Artist Search':
+        return <SpotifyArtistSearch />;
+      case 'Spotify Me':
+        return <SpotifyMe />;
+      case 'Github User Search':
+        return <GithubUserSearch />;
+      case 'Github Project Search':
+        return <GithubProjectSearch />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <Grid
       container
@@ -102,13 +125,15 @@ const GridLayout = ({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            <Widgets
+                            <WidgetTemplate
                               item={item}
                               removeSelf={removeWidget}
                               edit={edit}
-                              Title={Title}
-                              HoverTitle={HoverTitle}
-                            />
+                              Title={item.type}
+                              HoverTitle={item.type}
+                            >
+                              {setWidgetType(item.type)}
+                            </WidgetTemplate>
                           </div>
                         )}
                       </Draggable>
@@ -123,14 +148,16 @@ const GridLayout = ({
           <Grid container>
             {
               widgetList.map((item, key) => (
-                <Widgets
+                <WidgetTemplate
                   key={item.id}
                   item={item}
                   removeSelf={removeWidget}
                   edit={edit}
-                  Title={Title}
-                  HoverTitle={HoverTitle}
-                />
+                  Title={item.type}
+                  HoverTitle={item.type}
+                >
+                  {setWidgetType(item.type)}
+                </WidgetTemplate>
               ))
             }
           </Grid>
