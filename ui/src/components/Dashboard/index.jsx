@@ -10,6 +10,7 @@ import widgetActions from '../../redux/actions/widgetActions';
 import WelcomeTitle from './components/WelcomeTitle';
 import GridLayout from './components/GridLayout';
 import AddWidget from './components/AddWIdget';
+import userActions from '../../redux/actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -36,17 +37,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Dashboard = ({
-  changePageTitle, username, darkMode, updateWidgets, getWidgets, widgets,
+  _id, changePageTitle, username, darkMode, updateWidgets, getWidgets, getUser, widgets,
 }) => {
   const classes = useStyles();
 
   const [edit, setEdit] = useState(false);
 
-  const addNewWidget = () => {
-    const newWidgetList = [...widgets.widgets];
+  const addNewWidget = (type) => {
+    const newWidgetList = widgets.widgets ? [...widgets.widgets] : [];
     const randomValues = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-    newWidgetList.push({ id: `widget-${Array(10).fill(randomValues).map((x) => x[Math.floor(Math.random() * x.length)]).join('')}` });
+    // Is widget already displayed
+    if (newWidgetList.find((widget) => widget.type === type)) return;
+
+    newWidgetList.push({ type, id: `widget-${Array(10).fill(randomValues).map((x) => x[Math.floor(Math.random() * x.length)]).join('')}` });
 
     updateWidgets(newWidgetList);
   };
@@ -73,6 +77,7 @@ const Dashboard = ({
   useEffect(() => {
     changePageTitle('Dashboard');
     getWidgets();
+    getUser(_id);
   }, []);
 
   return (
@@ -106,25 +111,23 @@ const Dashboard = ({
   );
 };
 
-Dashboard.defaultProps = {
-  widgets: { state: 'Loading' },
-};
-
 Dashboard.propTypes = {
+  _id: PropTypes.string.isRequired,
   changePageTitle: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
   darkMode: PropTypes.bool.isRequired,
   updateWidgets: PropTypes.func.isRequired,
   getWidgets: PropTypes.func.isRequired,
-  widgets: PropTypes.object,
+  getUser: PropTypes.func.isRequired,
+  widgets: PropTypes.object.isRequired,
 };
 
 function mapState(state) {
-  const { username } = state.user.userData;
+  const { username, _id } = state.user.userData;
   const { darkMode } = state.ui;
   const { widgets } = state.widget;
   return {
-    username, darkMode, widgets,
+    username, darkMode, widgets, _id,
   };
 }
 
@@ -132,6 +135,7 @@ const actionCreators = {
   changePageTitle: uiActions.changePageTitle,
   updateWidgets: widgetActions.updateWidgets,
   getWidgets: widgetActions.getWidgets,
+  getUser: userActions.getUser,
 };
 
 export default connect(mapState, actionCreators)(Dashboard);
