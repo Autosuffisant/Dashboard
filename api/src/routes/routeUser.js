@@ -26,6 +26,7 @@ import { dashboardnode } from '../db';
 const User = dashboardnode.model('User', schemaUser);
 const passportSpotify = require('../controllers/controllerPassportSpotify');
 const passportGoogle = require('../controllers/controllerPassportGoogle');
+const passportGithub = require('../controllers/controllerPassportGithub');
 
 const routeUser = (app) => {
   app.route('/user')
@@ -266,6 +267,32 @@ const routeUser = (app) => {
         console.log(req.session.uuid);
         User.findByIdAndUpdate(req.session.uuid, { spotify: { token: req.session.accessToken } }, { new: true }, (err, user) => {
           user.spotify.token = req.session.accessToken;
+          console.log(user);
+          user.save();
+        });
+        res.redirect('http://localhost:3000/dashboard');
+      }
+    );
+  app.route('/auth/github/')
+    .get((req, res, next) => {
+      req.session.uuid = req.query.id;
+      console.log(req.session.uuid);
+      passportGithub.authenticate('github')(req, res, next);
+    });
+  app.route('/auth/github/callback')
+    /**
+     * @api {get} auth/spotify/callback Auth an user with spotify's API by it'd id
+     * @apiName passport.authenticate('spotify')
+     * @apiError 400 User not found
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {Array} Success message
+     */
+    .get(
+      passportGithub.authenticate('github'),
+      function (req, res) {
+        console.log(req.session.uuid);
+        User.findByIdAndUpdate(req.session.uuid, { github: { token: req.session.accessToken } }, { new: true }, (err, user) => {
           console.log(user);
           user.save();
         });
