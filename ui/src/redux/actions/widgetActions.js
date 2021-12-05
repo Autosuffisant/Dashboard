@@ -2,9 +2,11 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import SpotifyWebApi from 'spotify-web-api-js';
+import Github from 'github-api';
 import widgetConstants from '../constants/widgetConstants';
 import widget from '../reducers/widgetReducer';
 import widgetService from '../services/widgetServices';
+import userService from '../services/userServices';
 
 const getWidgets = () => (dispatch, getState) => {
   const state = getState();
@@ -70,7 +72,7 @@ const initSpotifyAPI = () => (dispatch, getState) => {
   function failure(error) { return { type: widgetConstants.GET_WIDGET_FAILURE, error }; }
 
   dispatch(request());
-  return widgetService.getWidgetsCredentials(getState().auth.authData._id)
+  return userService.getUserById(getState().auth.authData._id)
     .then(
       (credentialsSuccess) => {
         const spotifyAPI = new SpotifyWebApi();
@@ -85,15 +87,44 @@ const initSpotifyAPI = () => (dispatch, getState) => {
     );
 };
 
+const initGithubAPI = () => (dispatch, getState) => {
+  function initializeAPI(api) { return { type: widgetConstants.INIT_GITHUB_API, api }; }
+  function request() { return { type: widgetConstants.GET_CREDENTIALS_REQUEST }; }
+  function success(tokens) { return { type: widgetConstants.GET_CREDENTIALS_SUCCESS, tokens }; }
+  function failure(error) { return { type: widgetConstants.GET_WIDGET_FAILURE, error }; }
+
+  dispatch(request());
+  return userService.getUserById(getState().auth.authData._id)
+    .then(
+      (credentialsSuccess) => {
+        const githubAPI = new Github({
+          token: credentialsSuccess.github.token,
+        });
+        dispatch(success(credentialsSuccess));
+        dispatch(initializeAPI(githubAPI));
+      },
+      (error) => {
+        if (error) dispatch(failure(error.toString()));
+        else dispatch(failure('Server did not respond'));
+      },
+    );
+};
+
 const authSpotify = () => (dispatch, getState) => {
   window.location.href = `http://localhost:8080/auth/spotify/?id=${getState().auth.authData._id}`;
+};
+
+const authGithub = () => (dispatch, getState) => {
+  window.location.href = `http://localhost:8080/auth/github/?id=${getState().auth.authData._id}`;
 };
 
 const widgetActions = {
   updateWidgets,
   getWidgets,
   authSpotify,
+  authGithub,
   initSpotifyAPI,
+  initGithubAPI,
 };
 
 export default widgetActions;
