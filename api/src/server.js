@@ -7,6 +7,7 @@ import routeLanguage from './routes/routeLanguage';
 import routeAuth from './routes/routeAuth';
 import routeAdministrator from './routes/routeAdministrator';
 import routeUser from './routes/routeUser';
+import routeAbout from './routes/routeAbout';
 
 const express = require('express');
 const paginate = require('express-paginate');
@@ -31,6 +32,7 @@ const port = 8080;
 connectToDashboardDB((err) => {
   if (err) console.log(err);
 
+  app.set('json spaces', 4);
   app.use(cors());
   app.use(session({
     secret: 'cats'
@@ -48,6 +50,7 @@ connectToDashboardDB((err) => {
   app.use(helmet());
   app.use(paginate.middleware(10, 50));
 
+  routeAbout(app);
   routeAuth(app);
   routeAdministrator(app);
   routeUser(app);
