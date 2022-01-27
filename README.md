@@ -18,24 +18,23 @@ The subject's requirements are the following
 ## Project's structure
 
 The Dashboard is divided in three primary parts
-
-### Front / UI <img align="left" alt="C" width="36px" src="https://github.com/Autosuffisant/Autosuffisant/blob/master/assets/react-native-logo.png?raw=true" />
+### Front / UI <img align="left" alt="C" width="26px" src="https://github.com/Autosuffisant/Autosuffisant/blob/master/assets/react-native-logo.png?raw=true" />
 
 The UI is the user seen application, allowing him to log-in, see his widgets and edit them as he wishes.
 
-### Backend server
+It was created with [React JS](https://reactjs.org/)
+
+### Backend server <img align="left" alt="C" width="26px" src="https://github.com/Autosuffisant/Autosuffisant/blob/master/assets/nodejs-logo.png?raw=true" />
 
 The server handles the connection protocols, saves and sends widgets to the user's interface and handles the about.json
 
-### Database
+We made it using [ExpressJS](https://expressjs.com/)
+
+### Database <img align="left" alt="C" width="26px" src="https://github.com/Autosuffisant/Autosuffisant/blob/master/assets/mongodb-logo.png?raw=true" />
 
 The database holds user's variables and data so on each session they keep their configuration of widgets and personal details.
 
-This kind of architecture (micro-services) is used more and more by tech companies. It allows :
-- Better team organisation.
-- Less frustration between teams.
-- Less errors in code and production environment.
-- The ability to code with different programming language, making it easier to use the right programming language for the right situation.
+We chose to design it using [MongoDB](https://www.mongodb.com/) which can be easily handled through node instances using [Mongoose](https://mongoosejs.com/)
 
 ## The services
 
