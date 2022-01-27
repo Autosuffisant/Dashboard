@@ -74,3 +74,29 @@ Developer documentation of the whole application can be found [here](https://git
     - A color theme changer
     - Encryption of the user's password
     - Dark and bright theme
+
+## Preview !
+
+### Login screen with registering and functionnal Google OAuth
+
+<img align="left" src="https://github.com/Autosuffisant/Dashboard/blob/main/assets/login_screen.png" width="1000" />
+
+### Application landing page 
+
+<img align="left" src="https://github.com/Autosuffisant/Dashboard/blob/main/assets/dashboard_empty.png" width="1000" />
+
+### Connect to APIs and add a new widget
+
+<img align="left" src="https://github.com/Autosuffisant/Dashboard/blob/main/assets/api_connect.png" width="1000" />
+
+### An example of a Widget using Spotify
+
+<img src="https://github.com/Autosuffisant/Dashboard/blob/main/assets/spotify_widget.png" width="400" />
+
+### Dark mode implementation
+
+<img src="https://github.com/Autosuffisant/Dashboard/blob/main/assets/dark_mode.png" width="400" />
+
+### Full screen, isn't that pretty ?
+
+<img align="left" src="https://github.com/Autosuffisant/Dashboard/blob/main/assets/dark_mode_fullscreen.png" width="1000" />
